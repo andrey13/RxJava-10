@@ -18,6 +18,7 @@ class CategoriesAdapter(private val categories: MutableList<EOCategory>)
   override fun getItemCount() = categories.size
 
   fun updateCategories(categories: List<EOCategory>?) {
+    this.categories.clear()
     this.categories.addAll(categories ?: emptyList())
     notifyDataSetChanged()
   }

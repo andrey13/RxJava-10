@@ -1,6 +1,7 @@
 package com.raywenderlich.android.ourplanet
 
 import com.raywenderlich.android.ourplanet.model.EOCategoriesResponse
+import com.raywenderlich.android.ourplanet.model.EOEventsResponse
 import com.raywenderlich.android.ourplanet.model.EONET
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.OkHttpClient
@@ -9,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface EONETApi {
     companion object {
@@ -33,4 +35,10 @@ interface EONETApi {
 
     @GET(EONET.CATEGORIES_ENDPOINT)
     fun fetchCategories(): Observable<EOCategoriesResponse>
+
+    @GET(EONET.EVENTS_ENDPOINT)
+    fun fetchEvents(
+        @Query("days") forLastDays: Int,
+        @Query("status") status: String
+    ): Observable<EOEventsResponse>
 }

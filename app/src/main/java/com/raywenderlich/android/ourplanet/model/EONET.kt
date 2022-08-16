@@ -23,4 +23,24 @@ object EONET {
   fun fetchCategories(): Observable<EOCategoriesResponse> {
     return eonet.fetchCategories()
   }
+
+  fun fetchEvents(forLastDays: Int = 360): Observable<List<EOEvent>> {
+    val openEvents = events(forLastDays, false)
+    val closedEvents = events(forLastDays, true)
+    return openEvents.concatWith(closedEvents)
+  }
+
+  private fun events(
+    forLastDays: Int,
+    closed: Boolean
+  ): Observable<List<EOEvent>> {
+
+    val status = if (closed) "closed" else "open"
+    return EONET.eonet.fetchEvents(forLastDays, status)
+      .map { response ->
+        val events = response.events
+        events.mapNotNull { EOEvent.fromJson(it) }
+      }
+  }
+
 }
