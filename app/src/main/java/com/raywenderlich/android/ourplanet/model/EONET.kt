@@ -24,23 +24,35 @@ object EONET {
     return eonet.fetchCategories()
   }
 
-  fun fetchEvents(forLastDays: Int = 360): Observable<List<EOEvent>> {
-    val openEvents = events(forLastDays, false)
-    val closedEvents = events(forLastDays, true)
-    return openEvents.concatWith(closedEvents)
+  fun fetchEvents(category: EOCategory, forLastDays: Int = 360):
+      Observable<List<EOEvent>> {
+    val openEvents = EONET.events(forLastDays, false, category.endpoint)
+    val closedEvents = EONET.events(forLastDays, true, category.endpoint)
+    return Observable.merge(openEvents, closedEvents)
   }
 
   private fun events(
     forLastDays: Int,
-    closed: Boolean
+    closed: Boolean,
+    endpoint: String
   ): Observable<List<EOEvent>> {
-
     val status = if (closed) "closed" else "open"
-    return EONET.eonet.fetchEvents(forLastDays, status)
+    return EONET.eonet.fetchEvents(endpoint, forLastDays, status)
       .map { response ->
         val events = response.events
         events.mapNotNull { EOEvent.fromJson(it) }
       }
+  }
+
+  fun filterEventsForCategory(
+    events: List<EOEvent>,
+    category: EOCategory
+  ): List<EOEvent> {
+
+    return events.filter { event ->
+      event.categories.contains(category.id) &&
+          !category.events.map { it.id }.contains(event.id)
+    }.sortedWith(EOEvent.compareByDates)
   }
 
 }

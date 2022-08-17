@@ -10,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface EONETApi {
@@ -36,8 +37,9 @@ interface EONETApi {
     @GET(EONET.CATEGORIES_ENDPOINT)
     fun fetchCategories(): Observable<EOCategoriesResponse>
 
-    @GET(EONET.EVENTS_ENDPOINT)
+    @GET("{endpoint}")
     fun fetchEvents(
+        @Path("endpoint", encoded = true) endpoint: String,
         @Query("days") forLastDays: Int,
         @Query("status") status: String
     ): Observable<EOEventsResponse>
