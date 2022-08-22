@@ -26,13 +26,16 @@ class CategoriesViewModel : ViewModel() {
       }
 
     val eventsObservables = eoCategories.flatMap { categories ->
-      val categoryEventObservables = categories.map { category ->
-        EONET.fetchEvents(category)
+      val categoryEventObservables = categories.map {
+          category -> EONET.fetchEvents(category)
       }
       Observable.fromIterable(categoryEventObservables)
     }
 
-    val downloadedEvents = Observable.merge(eventsObservables, 2)
+    val downloadedEvents = Observable.merge(
+      eventsObservables,
+      2
+    )
 
     val updatedCategories = eoCategories.flatMap { categories ->
       downloadedEvents.scan(categories) { updated, events ->

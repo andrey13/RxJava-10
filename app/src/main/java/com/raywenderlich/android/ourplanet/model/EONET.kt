@@ -25,9 +25,16 @@ object EONET {
   }
 
   fun fetchEvents(category: EOCategory, forLastDays: Int = 360):
-      Observable<List<EOEvent>> {
-    val openEvents = EONET.events(forLastDays, false, category.endpoint)
-    val closedEvents = EONET.events(forLastDays, true, category.endpoint)
+      Observable<List<EOEvent>>
+  {
+    val openEvents = events(
+      forLastDays, false,
+      category.endpoint)
+
+    val closedEvents = events(
+      forLastDays, true,
+      category.endpoint)
+
     return Observable.merge(openEvents, closedEvents)
   }
 
